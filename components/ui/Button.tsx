@@ -6,8 +6,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const Button: React.FC<ButtonProps> = ({ variant = 'primary', children, className = '', ...props }) => {
-  // Styles tailored for a "Cinematic" feel: smaller text, wider tracking, slower transitions
-  const baseStyles = "relative inline-flex items-center justify-center px-10 py-5 text-xs font-bold uppercase tracking-[0.25em] transition-all duration-700 overflow-hidden group border";
+  // Refined smaller padding and text for a premium studio feel
+  const baseStyles = "relative inline-flex items-center justify-center px-6 py-2.5 md:px-8 md:py-3 text-[10px] md:text-xs font-bold uppercase tracking-[0.25em] transition-all duration-700 overflow-hidden group border select-none";
   
   const variants = {
     primary: "border-white/20 text-white hover:bg-white hover:text-black hover:border-white",

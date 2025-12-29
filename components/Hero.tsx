@@ -1,3 +1,4 @@
+
 import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -124,7 +125,7 @@ const Hero: React.FC<HeroProps> = ({ startAnimation = false }) => {
                   {RIBBON_IMAGES.map((src, i) => (
                     <div 
                       key={`${idx}-${i}`} 
-                      className="ribbon-item relative w-[28vw] md:w-[20vw] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-md shadow-2xl bg-gray-900 transition-all duration-700"
+                      className="ribbon-item relative w-[35vw] md:w-[20vw] aspect-[16/9] flex-shrink-0 overflow-hidden rounded-md shadow-2xl bg-gray-900 transition-all duration-700"
                       style={{ transformStyle: 'preserve-3d' }}
                     >
                        <img src={src} className="w-full h-full object-cover" loading="eager" draggable="false" />
@@ -136,7 +137,7 @@ const Hero: React.FC<HeroProps> = ({ startAnimation = false }) => {
         </div>
       </div>
 
-      <div ref={contentRef} className="relative z-30 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-16 md:pb-24 flex flex-col md:flex-row items-end justify-between gap-10 pointer-events-none">
+      <div ref={contentRef} className="relative z-30 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-16 md:pb-24 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-10 pointer-events-none">
         <div className="max-w-4xl pointer-events-auto">
           <div className="ui-fade mb-6 flex items-center gap-3">
              <div className="w-10 h-[1px] bg-violet-500"></div>
@@ -144,7 +145,7 @@ const Hero: React.FC<HeroProps> = ({ startAnimation = false }) => {
                Directing Digital Legacies
              </span>
           </div>
-          <h1 className="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-[0.85] tracking-tighter uppercase mb-8 drop-shadow-[0_15px_35px_rgba(0,0,0,1)]">
+          <h1 className="font-display font-bold text-4xl md:text-7xl lg:text-8xl leading-[0.85] tracking-tighter uppercase mb-8 drop-shadow-[0_15px_35px_rgba(0,0,0,1)]">
             <div className="overflow-hidden">
                 <span className="masked-line-inner block text-white origin-bottom-left">Beyond Digital.</span>
             </div>
@@ -155,13 +156,13 @@ const Hero: React.FC<HeroProps> = ({ startAnimation = false }) => {
             </div>
           </h1>
           <div className="ui-fade">
-            <p className="text-gray-300 text-sm md:text-xl leading-relaxed max-w-2xl font-light opacity-90 backdrop-blur-[2px] bg-black/10 p-4 border-l border-white/10">
+            <p className="text-gray-300 text-xs md:text-xl leading-relaxed max-w-2xl font-light opacity-90 backdrop-blur-[2px] bg-black/10 p-4 border-l border-white/10">
                 We craft <span className="text-white font-medium underline decoration-violet-500/50 underline-offset-4">high-fidelity interfaces</span> and cinematic motion for the world's most ambitious brands. Experience design, refined.
             </p>
           </div>
         </div>
         <div className="ui-fade flex flex-col items-start md:items-end gap-6 shrink-0 pointer-events-auto">
-            <Button variant="primary" className="shadow-2xl px-12 py-6 border-white/30 backdrop-blur-md">
+            <Button variant="primary" className="shadow-2xl px-8 md:px-12 py-4 md:py-6 border-white/30 backdrop-blur-md">
                 Enter The Studio
             </Button>
         </div>

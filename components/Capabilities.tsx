@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
@@ -50,12 +51,11 @@ const Capabilities: React.FC = () => {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
       const mm = gsap.context(() => {
-        // Floating Background Orb Animation
         if (!prefersReducedMotion) {
           gsap.to(orbRef.current, {
-            x: '20vw',
-            y: '10vh',
-            duration: 20,
+            x: '10vw',
+            y: '5vh',
+            duration: 15,
             repeat: -1,
             yoyo: true,
             ease: "sine.inOut"
@@ -70,13 +70,11 @@ const Capabilities: React.FC = () => {
           }
         });
 
-        // Entrance animation: Focus reveal
         tl.fromTo(headerRef.current, 
           { opacity: 0, filter: prefersReducedMotion ? "none" : "blur(20px)", y: 30 },
           { opacity: 1, filter: "blur(0px)", y: 0, duration: 1.8, ease: "expo.out" }
         );
 
-        // Staggered reveal for cards
         tl.fromTo(".capability-card", 
           { 
             opacity: 0, 
@@ -109,7 +107,6 @@ const Capabilities: React.FC = () => {
       className="relative w-full py-32 md:py-48 px-6 md:px-12 lg:px-24 bg-[#050505] overflow-hidden z-20"
     >
       <style>{`
-        /* Background Grid */
         .capabilities-grid-bg {
           position: absolute;
           inset: 0;
@@ -123,7 +120,7 @@ const Capabilities: React.FC = () => {
 
         .capability-card {
           position: relative;
-          padding: 3rem 2.5rem;
+          padding: 3.5rem 2.5rem;
           background: rgba(255, 255, 255, 0.015);
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255, 255, 255, 0.04);
@@ -143,7 +140,6 @@ const Capabilities: React.FC = () => {
           box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6);
         }
 
-        /* The Smooth Infinity Beam */
         .infinite-beam {
           position: absolute;
           bottom: 0;
@@ -173,7 +169,7 @@ const Capabilities: React.FC = () => {
         }
 
         .capability-card:hover .infinite-beam::after {
-          animation-duration: 1.5s; /* Speed up on hover */
+          animation-duration: 1.5s;
           height: 2px;
           background: linear-gradient(
             90deg,
@@ -190,7 +186,6 @@ const Capabilities: React.FC = () => {
           100% { left: 150%; }
         }
 
-        /* Ambient Glow Interaction */
         .card-glow {
           position: absolute;
           top: 0;
@@ -219,19 +214,15 @@ const Capabilities: React.FC = () => {
         }
       `}</style>
 
-      {/* Background Elements */}
       <div className="capabilities-grid-bg" />
       <div 
         ref={orbRef}
         className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-violet-600/5 blur-[120px] rounded-full pointer-events-none z-0" 
       />
-      <div className="absolute bottom-0 right-0 w-[30vw] h-[30vw] bg-violet-600/5 blur-[100px] rounded-full pointer-events-none z-0 translate-x-1/2 translate-y-1/2" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        
-        {/* Section Header */}
         <div ref={headerRef} className="mb-20 md:mb-32 max-w-4xl">
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-10">
              <div className="h-[1px] w-12 bg-violet-500/50"></div>
              <span className="text-[10px] font-mono tracking-[0.5em] text-violet-400 uppercase block">
                Expertise Systems
@@ -243,8 +234,7 @@ const Capabilities: React.FC = () => {
           </h2>
         </div>
 
-        {/* Capabilities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
           {SERVICES.map((s) => (
             <div 
               key={s.id} 
@@ -259,7 +249,7 @@ const Capabilities: React.FC = () => {
             >
               <div className="card-glow" />
               
-              <div className="space-y-10 relative z-10">
+              <div className="space-y-12 relative z-10">
                 <div className="flex items-center justify-between">
                   <span className="id-badge">[{s.id}]</span>
                   <div className="px-3 py-1 border border-white/5 rounded-full text-[8px] font-mono uppercase tracking-widest text-gray-500 group-hover:text-violet-400 group-hover:border-violet-500/30 transition-all duration-500">
@@ -267,17 +257,17 @@ const Capabilities: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-5">
+                <div className="space-y-6">
                   <h3 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-white group-hover:text-violet-100 transition-colors duration-500">
                     {s.title}
                   </h3>
-                  <p className="text-gray-400 font-light leading-relaxed text-sm md:text-base opacity-80 group-hover:opacity-100 transition-opacity">
+                  <p className="text-gray-400 font-light leading-relaxed text-sm md:text-lg opacity-80 group-hover:opacity-100 transition-opacity">
                     {s.desc}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-14 flex items-center justify-between relative z-10 border-t border-white/5 pt-6">
+              <div className="mt-14 flex items-center justify-between relative z-10 border-t border-white/5 pt-8">
                 <span className="text-[9px] font-mono uppercase tracking-[0.4em] text-gray-600 group-hover:text-white transition-colors duration-500">
                   Protocol {s.id}A
                 </span>
@@ -291,7 +281,6 @@ const Capabilities: React.FC = () => {
                 </div>
               </div>
 
-              {/* The Infinite Smooth Beam */}
               <div className="infinite-beam" />
             </div>
           ))}

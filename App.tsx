@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
@@ -20,16 +21,15 @@ const App: React.FC = () => {
   const [loaderVisible, setLoaderVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // 1. CINEMATIC SMOOTH SCROLL (Lenis)
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.4,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
       smoothWheel: true,
-      wheelMultiplier: 1.1,
+      wheelMultiplier: 1,
       lerp: 0.1,
     });
 
@@ -44,7 +44,6 @@ const App: React.FC = () => {
     return () => lenis.destroy();
   }, []);
 
-  // 2. LOADER HANDOFF LOGIC
   const handleInteractionStart = useCallback(() => {
     setHeroActive(true);
   }, []);
@@ -57,7 +56,6 @@ const App: React.FC = () => {
     }, 100);
   }, []);
 
-  // 3. CINEMATIC SCENE TRANSITION ENGINE
   useEffect(() => {
     if (loaderVisible) return;
     
@@ -68,9 +66,7 @@ const App: React.FC = () => {
       sections.forEach((section) => {
         const type = section.getAttribute('data-scene-type') || 'soft-cut';
         
-        const applyTransition = () => {
-          if (prefersReducedMotion) return;
-
+        if (!prefersReducedMotion) {
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: section,
@@ -82,40 +78,49 @@ const App: React.FC = () => {
 
           switch (type) {
             case 'soft-cut':
-              tl.to(section, { opacity: 0, scale: 0.9, y: -50, filter: "blur(10px)", ease: "none" });
+              tl.to(section, { 
+                opacity: 0, 
+                scale: 1.1, // Dolly zoom
+                y: -100, 
+                filter: "blur(15px)", 
+                ease: "power2.inOut" 
+              });
               break;
             case 'editorial-wipe':
-              tl.to(section, { clipPath: "inset(0% 0% 100% 0%)", opacity: 0.5, ease: "none" });
+              tl.to(section, { 
+                clipPath: "inset(0% 0% 100% 0%)", 
+                opacity: 0, 
+                scale: 0.9,
+                ease: "power1.inOut" 
+              });
               break;
             case 'parallax-depth':
               const layers = section.querySelectorAll('[data-parallax]');
               layers.forEach((layer: any) => {
                 const speed = parseFloat(layer.getAttribute('data-parallax')) || 0.2;
-                tl.to(layer, { y: -150 * speed, opacity: 0.2, ease: "none" }, 0);
+                tl.to(layer, { y: -200 * speed, ease: "none" }, 0);
               });
-              tl.to(section, { opacity: 0, ease: "none" }, 0);
+              tl.to(section, { opacity: 0, filter: "blur(10px)", ease: "none" }, 0);
               break;
           }
-        };
-
-        applyTransition();
+        }
 
         const reveals = section.querySelectorAll('[data-reveal]');
         if (reveals.length > 0) {
           gsap.fromTo(reveals, 
-            { opacity: 0, y: 50, filter: "blur(10px)" },
+            { opacity: 0, y: 30, filter: "blur(10px)" },
             {
               scrollTrigger: {
                 trigger: section,
-                start: "top 75%",
+                start: "top 80%",
                 toggleActions: "play none none reverse",
               },
               opacity: 1,
               y: 0,
               filter: "blur(0px)",
-              duration: 1.2,
+              duration: 1.5,
               stagger: 0.1,
-              ease: "power4.out"
+              ease: "expo.out"
             }
           );
         }
@@ -147,6 +152,7 @@ const App: React.FC = () => {
           <Capabilities />
         </div>
 
+        {/* Process has internal pinning */}
         <Process />
 
         <div data-scene data-scene-type="parallax-depth">

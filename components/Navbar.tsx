@@ -1,3 +1,4 @@
+
 import React, { useLayoutEffect, useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -68,15 +69,15 @@ const Navbar: React.FC<NavbarProps> = ({ startAnimation = false }) => {
   return (
     <nav 
       ref={navRef}
-      className="fixed top-0 left-0 w-full z-50 px-6 py-6 md:px-12 flex justify-between items-center mix-blend-exclusion text-white transition-all duration-500"
+      className="fixed top-0 left-0 w-full z-50 px-4 md:px-12 py-4 md:py-6 flex justify-between items-center mix-blend-exclusion text-white transition-all duration-500"
     >
       {/* Brand Text (Left) */}
-      <div ref={brandRef} className="font-bold text-xl md:text-2xl tracking-[0.2em] cursor-pointer group font-display uppercase z-20">
+      <div ref={brandRef} className="font-bold text-sm md:text-2xl tracking-[0.2em] cursor-pointer group font-display uppercase z-20">
         Toro Logic
       </div>
 
       {/* Logo (Center Absolute) */}
-      <div ref={logoRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+      <div ref={logoRef} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden sm:block">
         <Logo className="w-10 h-10 md:w-12 md:h-12" />
       </div>
 
@@ -84,10 +85,10 @@ const Navbar: React.FC<NavbarProps> = ({ startAnimation = false }) => {
       <div ref={contactRef} className="z-20">
         <Button 
             variant="outline" 
-            className="px-6 py-3 text-[10px] md:text-xs tracking-[0.2em] border-white/30 hover:bg-white hover:text-black hover:border-white transition-all duration-500"
+            className="px-4 md:px-6 py-2 md:py-3 text-[8px] md:text-xs tracking-[0.2em] border-white/30 hover:bg-white hover:text-black hover:border-white transition-all duration-500"
             onClick={scrollToContact}
         >
-            Contact Us
+            Contact
         </Button>
       </div>
     </nav>

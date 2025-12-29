@@ -73,7 +73,9 @@ const Process: React.FC = () => {
       mm.add("(min-width: 1024px)", () => {
         const cards = gsap.utils.toArray('.process-scene-card') as HTMLElement[];
         
-        // Horizontal translation tween
+        // Calculate scroll end more accurately based on card width
+        const totalWidth = (cards.length - 1) * window.innerWidth;
+        
         const mainScroll = gsap.to(cards, {
           xPercent: -100 * (cards.length - 1),
           ease: "none",
@@ -81,19 +83,18 @@ const Process: React.FC = () => {
             trigger: sectionRef.current,
             pin: true,
             scrub: 1,
-            // Extended end to allow the final step to settle and stay visible
-            end: () => `+=${containerRef.current?.offsetWidth || window.innerWidth * 5}`,
+            // Added a settle buffer (window.innerHeight) to the end so the last slide stays pinned
+            end: () => `+=${totalWidth + window.innerHeight}`, 
             invalidateOnRefresh: true,
             snap: {
               snapTo: 1 / (cards.length - 1),
-              duration: 0.5,
-              delay: 0.1,
+              duration: 0.8,
+              delay: 0,
               ease: "power2.inOut"
             }
           }
         });
 
-        // Overall progress bar
         gsap.fromTo(progressBarRef.current, 
           { scaleX: 0 },
           {
@@ -102,18 +103,17 @@ const Process: React.FC = () => {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top top",
-              end: () => `+=${containerRef.current?.offsetWidth || window.innerWidth * 5}`,
+              end: () => `+=${totalWidth}`,
               scrub: 1
             }
           }
         );
 
-        // Card-specific activation triggers using containerAnimation
         cards.forEach((card, i) => {
           const details = card.querySelectorAll('.detail-reveal');
           const image = card.querySelector('.card-image-main');
           
-          // Activation Animation
+          // Improved card visibility range: no blur, just opacity & focus
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: card,
@@ -124,47 +124,48 @@ const Process: React.FC = () => {
             }
           });
 
-          // Focus sharpening & depth logic
           tl.fromTo(card, 
-            { opacity: 0.1, scale: 0.85, filter: "blur(10px)" },
-            { opacity: 1, scale: 1, filter: "blur(0px)", ease: "none" },
+            { opacity: 0.2, scale: 0.95 },
+            { opacity: 1, scale: 1, ease: "none" },
             0
           );
 
-          // Details reveal
-          const textTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: card,
-              containerAnimation: mainScroll,
-              start: "left 60%",
-              end: "left 40%",
-              toggleActions: "play none none reverse",
+          // Details reveal within the horizontal move
+          gsap.fromTo(details,
+            { opacity: 0, y: 30 },
+            { 
+              opacity: 1, 
+              y: 0, 
+              duration: 0.8, 
+              stagger: 0.1, 
+              ease: "expo.out",
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: mainScroll,
+                start: "left 40%",
+                toggleActions: "play none none reverse",
+              }
             }
-          });
-
-          textTl.fromTo(details,
-            { autoAlpha: 0, y: 30, filter: "blur(5px)" },
-            { autoAlpha: 1, y: 0, filter: "blur(0px)", stagger: 0.05, duration: 1, ease: "power4.out" }
           );
 
-          // Image specific focus
           tl.fromTo(image,
-            { filter: "brightness(0.3) contrast(0.6) grayscale(100%)", scale: 1.1 },
-            { filter: "brightness(1) contrast(1) grayscale(0%)", scale: 1, ease: "none" },
+            { filter: "brightness(0.5) contrast(0.8)", scale: 1.05 },
+            { filter: "brightness(1) contrast(1)", scale: 1, ease: "none" },
             0
           );
         });
       });
 
-      // Mobile vertical logic remains simple for performance
+      // Mobile vertical logic
       mm.add("(max-width: 1023px)", () => {
         const cards = gsap.utils.toArray('.process-scene-card') as HTMLElement[];
         cards.forEach((card: any) => {
           gsap.fromTo(card, 
-            { opacity: 0, y: 50 },
+            { opacity: 0, y: 30 },
             {
               opacity: 1,
               y: 0,
+              duration: 1.2,
               scrollTrigger: {
                 trigger: card,
                 start: "top 80%",
@@ -187,7 +188,7 @@ const Process: React.FC = () => {
     >
       <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
       
-      {/* Background Section Header */}
+      {/* Unified Section Header */}
       <div className="absolute top-12 left-6 md:left-12 lg:left-24 z-10 flex flex-col gap-2 pointer-events-none">
          <span className="text-[10px] font-mono tracking-[0.5em] text-violet-500 uppercase">
            [ Operational Blueprint ]
@@ -205,34 +206,30 @@ const Process: React.FC = () => {
         />
       </div>
 
-      <div ref={containerRef} className="flex h-full w-fit items-center px-6 md:px-12 lg:px-24">
+      <div ref={containerRef} className="flex h-full w-fit items-center lg:px-0">
         {PROCESS_STEPS.map((step, i) => (
-          <div key={step.id} className="process-scene-card w-screen lg:w-[85vw] h-[75vh] md:h-[65vh] flex-shrink-0 flex flex-col lg:flex-row items-center gap-8 lg:gap-20 px-4 md:px-12 relative will-change-transform">
+          <div key={step.id} className="process-scene-card w-screen lg:w-screen h-full flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-32 px-6 md:px-12 lg:px-48 relative will-change-transform">
             
-            {/* MEDIA COMPONENT */}
-            <div className="w-full lg:w-[55%] h-1/2 lg:h-full relative group">
-               <div className="absolute inset-0 border border-white/5 rounded-sm overflow-hidden bg-zinc-900/40 shadow-2xl transition-all duration-700">
+            {/* MEDIA COMPONENT - Guaranteed crisp visibility */}
+            <div className="w-full lg:w-[50%] h-[35%] lg:h-[60%] relative group">
+               <div className="absolute inset-0 border border-white/5 rounded-sm overflow-hidden bg-zinc-900 shadow-2xl transition-all duration-700">
                   <img 
                     src={step.image} 
                     alt={step.title}
                     className="card-image-main w-full h-full object-cover will-change-transform"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   
-                  {/* Internal Shutter UI */}
                   <div className="absolute top-6 left-6 flex items-center gap-3">
                      <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                      <span className="text-[8px] font-mono tracking-widest uppercase text-white/50">Rec_Step_{step.id}</span>
                   </div>
-                  <div className="absolute bottom-6 right-6">
-                     <span className="text-[8px] font-mono tracking-widest uppercase text-white/30">Phase_{step.phase}</span>
-                  </div>
                </div>
             </div>
 
-            {/* TEXT COMPONENT */}
-            <div className="card-text-content w-full lg:w-[45%] flex flex-col justify-center space-y-6 lg:space-y-8">
-               <div className="space-y-4">
+            {/* TEXT COMPONENT - Precise layout for side-by-side view */}
+            <div className="card-text-content w-full lg:w-[40%] flex flex-col justify-center space-y-6 lg:space-y-10">
+               <div className="space-y-4 lg:space-y-6">
                   <div className="flex items-center gap-4">
                     <span className="text-[10px] font-mono text-violet-500 bg-violet-500/10 px-3 py-1 rounded-full border border-violet-500/20">
                       0{i+1}
@@ -245,35 +242,22 @@ const Process: React.FC = () => {
                     {step.title}
                   </h3>
                   
-                  <p className="detail-reveal text-violet-400 font-medium text-base md:text-lg">
+                  <p className="detail-reveal text-violet-400 font-medium text-base md:text-xl">
                     {step.summary}
                   </p>
                   
-                  <p className="detail-reveal text-gray-400 font-light text-sm md:text-base leading-relaxed max-w-lg">
+                  <p className="detail-reveal text-gray-400 font-light text-sm md:text-lg leading-relaxed max-w-xl">
                     {step.description}
                   </p>
                </div>
 
-               {/* DELIVERABLES REGISTRY */}
-               <div className="detail-reveal pt-6 border-t border-white/5 grid grid-cols-2 gap-x-8 gap-y-3">
+               <div className="detail-reveal pt-8 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                   {step.bullets.map((bullet, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                       <div className="w-1 h-1 rounded-full bg-violet-600/40" />
-                       <span className="text-[9px] font-mono uppercase tracking-widest text-gray-500">{bullet}</span>
+                       <div className="w-1 h-1 rounded-full bg-violet-600" />
+                       <span className="text-[10px] font-mono uppercase tracking-widest text-gray-500">{bullet}</span>
                     </div>
                   ))}
-               </div>
-
-               {/* FOOTER METADATA */}
-               <div className="detail-reveal pt-6 flex items-center justify-between opacity-30">
-                  <div className="space-y-1">
-                     <span className="block text-[8px] font-mono uppercase text-gray-600">Key Artifacts</span>
-                     <span className="text-[9px] font-mono uppercase text-white tracking-tighter">{step.artifacts}</span>
-                  </div>
-                  <div className="text-right space-y-1">
-                     <span className="block text-[8px] font-mono uppercase text-gray-600">Status</span>
-                     <span className="text-[9px] font-mono uppercase text-white tracking-tighter">Verified_0{i+1}</span>
-                  </div>
                </div>
             </div>
 
